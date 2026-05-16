@@ -49,3 +49,13 @@ void atualizarJogador(Jogador *jogador, float delta) {
         jogador->y = jogador->baseY - jogador->altura;
     }
 }
+void desenharJogador(Jogador jogador, Texture2D sprite) {
+    DrawTexturePro(sprite,
+        (Rectangle){(float)sprite.width, 0, -(float)sprite.width, (float)sprite.height},
+        (Rectangle){jogador.x, jogador.y, jogador.largura, jogador.altura},
+        (Vector2){0, 0}, 0.0f, WHITE);
+}
+
+Rectangle obterRetanguloJogador(Jogador jogador) {
+    return (Rectangle){jogador.x + 12.0f, jogador.y + 10.0f, jogador.largura - 24.0f, jogador.altura - 18.0f};
+}
