@@ -60,9 +60,83 @@ int main(void) {
                                   &tempoJogo, &deslocamentoFundo, &ultimoMarcoPontuacao, nomeJogador);
                     pontuacaoSalva = false;
                     telaAtual = TELA_JOGO;
-                }
-            
+                }else if (opcaoMenu == 1) telaAtual = TELA_RANKING;
+                else if (opcaoMenu == 2) telaAtual = TELA_CREDITOS;
+                else                     rodando   = false;
             }
+            break;
+
+        case TELA_JOGO: {
+            bool estavaNoChao = !jogador.pulando;
+            atualizarJogador(&jogador, delta);
+            if (estavaNoChao && jogador.pulando) PlaySound(res.somPulo);
+
+            tempoJogo += delta;
+            pontuacao += delta * 18.0f;
+            int marcoAtual = (int)pontuacao / 100;
+            if (marcoAtual > ultimoMarcoPontuacao) {
+                ultimoMarcoPontuacao = marcoAtual;
+                PlaySound(res.somPontuacao);
+            }
+
+            float aceleracao       = tempoJogo * 7.5f;
+            float intervaloGeracao = 1.25f - tempoJogo * 0.018f;
+            if (intervaloGeracao < 0.47f) intervaloGeracao = 0.47f;
+
+            tempoGeracao += delta;
+            if (tempoGeracao >= intervaloGeracao) {
+                inserirObstaculo(&listaObstaculos, criarObstaculo(
+                    GetRandomValue(0, TIPOS_OBSTACULOS - 1),
+                    GetRandomValue(0, TOTAL_PISTAS - 1),
+                    LARGURA_TELA + 70.0f, 250.0f + tempoJogo * 5.0f));
+                tempoGeracao = 0.0f;
+            }
+
+            atualizarObstaculos(&listaObstaculos, delta, aceleracao);
+            deslocamentoFundo += (260.0f + aceleracao) * delta;
+
+            if (verificarColisao(listaObstaculos, jogador)) {
+                PlaySound(res.somColisao);
+                telaAtual = TELA_GAME_OVER;
+            }
+            break;
+        }
+
+        case TELA_RANKING:
+        case TELA_CREDITOS:
+            if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_BACKSPACE))
+                telaAtual = TELA_MENU;
+            break;
+
+        case TELA_GAME_OVER:
+            for (int tecla; (tecla = GetCharPressed()) > 0;) {
+                int n = (int)strlen(nomeJogador);
+                if (n < TAM_NOME_INPUT - 1 &&
+                    ((tecla >= 'A' && tecla <= 'Z') ||
+                     (tecla >= 'a' && tecla <= 'z') ||
+                     (tecla >= '0' && tecla <= '9'))) {
+                    nomeJogador[n]     = (char)tecla;
+                    nomeJogador[n + 1] = '\0';
+                }
+            }
+            if (IsKeyPressed(KEY_BACKSPACE)) {
+                int n = (int)strlen(nomeJogador);
+                if (n > 0) nomeJogador[n - 1] = '\0';
+            }
+            if (IsKeyPressed(KEY_ENTER) && !pontuacaoSalva) {
+                adicionarPontuacao(strlen(nomeJogador) > 0 ? nomeJogador : "Jogador", (int)pontuacao);
+                pontuacaoSalva = true;
+                PlaySound(res.somPontuacao);
+            }
+            if (IsKeyPressed(KEY_R)) {
+                reiniciarJogo(&jogador, &listaObstaculos, &pontuacao, &tempoGeracao,
+                              &tempoJogo, &deslocamentoFundo, &ultimoMarcoPontuacao, nomeJogador);
+                pontuacaoSalva = false;
+                telaAtual = TELA_JOGO;
+            }
+            if (IsKeyPressed(KEY_M)) { telaAtual = TELA_MENU; liberarObstaculos(&listaObstaculos); }
+            if (IsKeyPressed(KEY_ESCAPE)) rodando = false;
+            break;
         }
     }
 }
