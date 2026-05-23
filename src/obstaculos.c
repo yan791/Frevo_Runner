@@ -53,3 +53,19 @@ void desenharObstaculos(Obstaculo *lista, RecursosObstaculos recursos) {
             (Vector2){0, 0}, 0.0f, WHITE);
     }
 }
+
+
+bool verificarColisao(Obstaculo *lista, Jogador jogador) {
+    Rectangle jr = obterRetanguloJogador(jogador);
+    for (Obstaculo *a = lista; a; a = a->prox) {
+        if (a->pista != jogador.pista) continue;
+        Rectangle obr = obterRetanguloObstaculo(a);
+        if (CheckCollisionRecs(jr, obr) && !(jogador.pulando && jogador.y + jogador.altura < obr.y + 22.0f))
+            return true;
+    }
+    return false;
+}
+
+void liberarObstaculos(Obstaculo **lista) {
+    while (*lista) removerObstaculo(lista);
+}
