@@ -1,8 +1,6 @@
 #include "telas.h"
 #include "ranking.h"
-
 #include <string.h>
-
 #define FPS            60
 #define TAM_NOME_INPUT 24
 
@@ -137,6 +135,21 @@ int main(void) {
             if (IsKeyPressed(KEY_M)) { telaAtual = TELA_MENU; liberarObstaculos(&listaObstaculos); }
             if (IsKeyPressed(KEY_ESCAPE)) rodando = false;
             break;
+                BeginDrawing();
+        switch (telaAtual) {
+        case TELA_MENU:      desenharMenu(res.logo, res.icone, opcaoMenu);                                          break;
+        case TELA_JOGO:      desenharTelaJogo(res, listaObstaculos, jogador, pontuacao, tempoJogo, deslocamentoFundo); break;
+        case TELA_RANKING:   desenharRanking();                                                                     break;
+        case TELA_CREDITOS:  desenharCreditos();                                                                    break;
+        case TELA_GAME_OVER: desenharTelaGameOver(res, listaObstaculos, jogador, pontuacao, deslocamentoFundo, nomeJogador, pontuacaoSalva); break;
         }
+        EndDrawing();
+    }
+
+    liberarObstaculos(&listaObstaculos);
+    descarregarRecursos(res);
+    CloseAudioDevice();
+    CloseWindow();
+    return 0;
     }
 }
