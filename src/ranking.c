@@ -21,3 +21,26 @@ void salvarRanking(EntradaRanking ranking[], int quantidade) {
         fprintf(f, "%s %d\n", ranking[i].nome, ranking[i].pontuacao);
     fclose(f);
 }
+
+void ordenarRankingBubbleSort(EntradaRanking ranking[], int quantidade) {
+    for (int i = 0; i < quantidade - 1; i++) {
+        for (int j = 0; j < quantidade - i - 1; j++) {
+            if (ranking[j].pontuacao < ranking[j + 1].pontuacao) {
+                EntradaRanking temp = ranking[j];
+                ranking[j] = ranking[j + 1];
+                ranking[j + 1] = temp;
+            }
+        }
+    }
+}
+
+void adicionarPontuacao(const char *nome, int pontuacao) {
+    EntradaRanking ranking[MAX_RANKING + 1];
+    int n = carregarRanking(ranking, MAX_RANKING);
+    strncpy(ranking[n].nome, strlen(nome) > 0 ? nome : "Jogador", TAM_NOME - 1);
+    ranking[n].nome[TAM_NOME - 1] = '\0';
+    ranking[n].pontuacao = pontuacao;
+    ordenarRankingBubbleSort(ranking, ++n);
+    if (n > MAX_RANKING) n = MAX_RANKING;
+    salvarRanking(ranking, n);
+}
