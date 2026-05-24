@@ -49,8 +49,12 @@ int main(void) {
 
         switch (telaAtual) {
         case TELA_MENU:
-            if (IsKeyPressed(KEY_DOWN))  { opcaoMenu = (opcaoMenu + 1) % 4; PlaySound(res.somMenu); }
-            if (IsKeyPressed(KEY_UP))    { opcaoMenu = (opcaoMenu + 3) % 4; PlaySound(res.somMenu); }
+            if (IsKeyPressed(KEY_DOWN))  { 
+                opcaoMenu = (opcaoMenu + 1) % 4; PlaySound(res.somMenu); 
+            }
+            if (IsKeyPressed(KEY_UP))    { 
+                opcaoMenu = (opcaoMenu + 3) % 4; PlaySound(res.somMenu); 
+            }
             if (IsKeyPressed(KEY_ENTER)) {
                 PlaySound(res.somMenu);
                 if      (opcaoMenu == 0) {
@@ -135,7 +139,8 @@ int main(void) {
             if (IsKeyPressed(KEY_M)) { telaAtual = TELA_MENU; liberarObstaculos(&listaObstaculos); }
             if (IsKeyPressed(KEY_ESCAPE)) rodando = false;
             break;
-                BeginDrawing();
+                }
+        BeginDrawing();
         switch (telaAtual) {
         case TELA_MENU:      desenharMenu(res.logo, res.icone, opcaoMenu);                                          break;
         case TELA_JOGO:      desenharTelaJogo(res, listaObstaculos, jogador, pontuacao, tempoJogo, deslocamentoFundo); break;
@@ -151,5 +156,4 @@ int main(void) {
     CloseAudioDevice();
     CloseWindow();
     return 0;
-    }
 }
