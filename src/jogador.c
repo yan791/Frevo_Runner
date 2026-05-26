@@ -36,6 +36,7 @@ void atualizarJogador(Jogador *jogador, float delta) {
     }
 
     if (jogador->pulando) {
+        /* Simula gravidade: acumula velocidade vertical e atualiza posição */
         jogador->velocidadeY += 1850.0f * delta;
         jogador->y += jogador->velocidadeY * delta;
 

@@ -105,9 +105,10 @@ int main(void) {
                 PlaySound(res.somPontuacao);
             }
 
+            /* Dificuldade progressiva: velocidade e frequência de obstáculos aumentam com o tempo */
             float aceleracao       = tempoJogo * 7.5f;
             float intervaloGeracao = 1.25f - tempoJogo * 0.018f;
-            if (intervaloGeracao < 0.47f) intervaloGeracao = 0.47f;
+            if (intervaloGeracao < 0.47f) intervaloGeracao = 0.47f; /* intervalo mínimo entre obstáculos */
 
             tempoGeracao += delta;
             if (tempoGeracao >= intervaloGeracao) {
