@@ -37,7 +37,12 @@ void ordenarRankingBubbleSort(EntradaRanking ranking[], int quantidade) {
 void adicionarPontuacao(const char *nome, int pontuacao) {
     EntradaRanking ranking[MAX_RANKING + 1];
     int n = carregarRanking(ranking, MAX_RANKING);
-    strncpy(ranking[n].nome, strlen(nome) > 0 ? nome : "Jogador", TAM_NOME - 1);
+    const char *nomeFinal;
+    if (strlen(nome) > 0)
+        nomeFinal = nome;
+    else
+        nomeFinal = "Jogador";
+    strncpy(ranking[n].nome, nomeFinal, TAM_NOME - 1);
     ranking[n].nome[TAM_NOME - 1] = '\0';
     ranking[n].pontuacao = pontuacao;
     ordenarRankingBubbleSort(ranking, ++n);

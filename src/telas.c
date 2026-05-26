@@ -4,11 +4,17 @@
 #include <string.h>
 
 static void desenharBotao(Rectangle rect, const char *texto, bool selecionado) {
-    Color corFundo = selecionado
-        ? (Color){255, 198, 46, 255}
-        : (Color){ 28,  96, 169, 230};
+    Color corFundo;
+    if (selecionado)
+        corFundo = (Color){255, 198, 46, 255};
+    else
+        corFundo = (Color){ 28,  96, 169, 230};
 
-    Color corBorda = selecionado ? ORANGE : (Color){255, 255, 255, 210};
+    Color corBorda;
+    if (selecionado)
+        corBorda = ORANGE;
+    else
+        corBorda = (Color){255, 255, 255, 210};
 
     DrawRectangleRounded(rect, 0.22f, 12, corFundo);
     DrawRectangleRoundedLines(rect, 0.22f, 12, corBorda);
@@ -17,7 +23,11 @@ static void desenharBotao(Rectangle rect, const char *texto, bool selecionado) {
     int posX = (int)(rect.x + rect.width  / 2 - larguraTexto / 2);
     int posY = (int)(rect.y + 13);
 
-    Color corTexto = selecionado ? MAROON : WHITE;
+    Color corTexto;
+    if (selecionado)
+        corTexto = MAROON;
+    else
+        corTexto = WHITE;
     DrawText(texto, posX, posY, 30, corTexto);
 }
 
@@ -33,9 +43,11 @@ void desenharFundo(Texture2D fundo, float deslocamento, int pistaAtiva) {
         float y     = obterYDaPista(i);
         bool  ativa = (i == pistaAtiva);
 
-        Color corPista = ativa
-            ? (Color){110, 78, 55, 215}
-            : (Color){ 75, 54, 44, 190};
+        Color corPista;
+        if (ativa)
+            corPista = (Color){110, 78, 55, 215};
+        else
+            corPista = (Color){ 75, 54, 44, 190};
         DrawRectangle(0, (int)y - 8, LARGURA_TELA, 20, corPista);
 
         if (ativa)
@@ -106,9 +118,11 @@ void desenharRanking(void) {
     for (int i = 0; i < 5; i++) {
         Rectangle linha = {220, 160.0f + i * 62, 460, 46};
 
-        Color corFundo = (i == 0)
-            ? (Color){255, 215, 0, 45}
-            : (Color){255, 255, 255, 28};
+        Color corFundo;
+        if (i == 0)
+            corFundo = (Color){255, 215, 0, 45};
+        else
+            corFundo = (Color){255, 255, 255, 28};
         DrawRectangleRounded(linha, 0.18f, 10, corFundo);
         DrawRectangleRoundedLines(linha, 0.18f, 10, (Color){255, 255, 255, 40});
 
@@ -175,8 +189,16 @@ void desenharTelaJogo(Recursos res, Obstaculo *lista, Jogador jogador,
 
     for (int i = 0; i < TOTAL_PISTAS; i++) {
         bool  ativa = (i == jogador.pista);
-        int   raio  = ativa ? 6 : 4;
-        Color cor   = ativa ? GOLD : (Color){255, 255, 255, 80};
+        int raio;
+        if (ativa)
+            raio = 6;
+        else
+            raio = 4;
+        Color cor;
+        if (ativa)
+            cor = GOLD;
+        else
+            cor = (Color){255, 255, 255, 80};
         DrawCircle(415 + i * 18, 31, raio, cor);
     }
 }
@@ -205,14 +227,32 @@ void desenharTelaGameOver(Recursos res, Obstaculo *lista, Jogador jogador,
     bool cursor      = !pontuacaoSalva && (int)(GetTime() * 2) % 2 == 0;
     int  tamanhoNome = (int)strlen(nomeJogador);
 
-    DrawText(TextFormat("%s%s", tamanhoNome > 0 ? nomeJogador : "", cursor ? "|" : " "),
-             320, 280, 26, DARKBLUE);
+    const char *textoNome;
+    if (tamanhoNome > 0)
+        textoNome = nomeJogador;
+    else
+        textoNome = "";
+    const char *textoCursor;
+    if (cursor)
+        textoCursor = "|";
+    else
+        textoCursor = " ";
+    DrawText(TextFormat("%s%s", textoNome, textoCursor), 320, 280, 26, DARKBLUE);
 
     if (tamanhoNome == 0 && !cursor)
         DrawText("Jogador", 320, 280, 26, (Color){150, 150, 180, 160});
 
-    Color corStatus = pontuacaoSalva ? GREEN : (Color){200, 200, 200, 200};
-    DrawText(pontuacaoSalva ? "Pontuacao salva!" : "ENTER para salvar", 330, 330, 22, corStatus);
+    Color corStatus;
+    if (pontuacaoSalva)
+        corStatus = GREEN;
+    else
+        corStatus = (Color){200, 200, 200, 200};
+    const char *textoStatus;
+    if (pontuacaoSalva)
+        textoStatus = "Pontuacao salva!";
+    else
+        textoStatus = "ENTER para salvar";
+    DrawText(textoStatus, 330, 330, 22, corStatus);
 
     DrawRectangle(212, 385, 476, 1, (Color){255, 255, 255, 40});
     DrawText("R   - Reiniciar",      350, 395, 22, RAYWHITE);

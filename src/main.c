@@ -151,7 +151,12 @@ int main(void) {
                 if (n > 0) nomeJogador[n - 1] = '\0';
             }
             if (IsKeyPressed(KEY_ENTER) && !pontuacaoSalva) {
-                adicionarPontuacao(strlen(nomeJogador) > 0 ? nomeJogador : "Jogador", (int)pontuacao);
+                const char *nomeParaSalvar;
+                if (strlen(nomeJogador) > 0)
+                    nomeParaSalvar = nomeJogador;
+                else
+                    nomeParaSalvar = "Jogador";
+                adicionarPontuacao(nomeParaSalvar, (int)pontuacao);
                 pontuacaoSalva = true;
                 PlaySound(res.somPontuacao);
             }
