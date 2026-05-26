@@ -1,46 +1,38 @@
-CC      := gcc
-TARGET  := FrevoRunner
-SRC     := src/main.c src/jogador.c src/obstaculos.c src/ranking.c src/recursos.c src/telas.c
-OBJ     := $(SRC:.c=.o)
-CFLAGS  := -Wall -Wextra -std=c99 -O2 -I./include
+# Makefile para Frevo Runner (Compatível com Windows, Linux e macOS)
 
-SFX_SRC := tools_generate_sfx.c
-SFX_BIN := tools_generate_sfx
-SFX_OUT := assets/audio/menu.wav assets/audio/score.wav \
-           assets/audio/collision.wav assets/audio/jump.wav
+CC = gcc
+CFLAGS = -Wall -Iinclude -O2
+TARGET = FrevoRunner
 
-UNAME_S    := $(shell uname -s)
-PKG_RAYLIB := $(shell pkg-config --libs --cflags raylib 2>/dev/null)
-
-ifeq ($(strip $(PKG_RAYLIB)),)
-    ifeq ($(UNAME_S),Darwin)
-        RAYLIB_FLAGS := -lraylib -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
-    else
-        RAYLIB_FLAGS := -lraylib -lGL -lpthread -ldl -lrt -lX11
-    endif
+# Detecção do Sistema Operacional
+ifeq ($(OS),Windows_NT)
+	# Windows (MinGW)
+	LDFLAGS = -lraylib -lopengl32 -lgdi32 -lwinmm
 else
-    RAYLIB_FLAGS := $(PKG_RAYLIB)
+	UNAME_S := $(shell uname -s)
+	ifeq ($(UNAME_S),Linux)
+		# Linux
+		LDFLAGS = -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+	endif
+	ifeq ($(UNAME_S),Darwin)
+		# macOS
+		LDFLAGS = -lraylib -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL
+	endif
 endif
 
-LDLIBS := $(RAYLIB_FLAGS) -lm
+SRC = src/main.c src/jogador.c src/obstaculos.c src/ranking.c src/recursos.c src/telas.c
+OBJ = $(SRC:.c=.o)
 
-.PHONY: all run clean sfx
-
-all: sfx $(TARGET)
-sfx: $(SFX_OUT)
-
-$(SFX_OUT): $(SFX_SRC)
-	$(CC) -O2 -o $(SFX_BIN) $(SFX_SRC) -lm
-	./$(SFX_BIN)
+all: $(TARGET)
 
 $(TARGET): $(OBJ)
-	$(CC) $(OBJ) -o $(TARGET) $(LDLIBS)
+	$(CC) $(OBJ) -o $(TARGET) $(LDFLAGS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-run: $(TARGET)
-	./$(TARGET)
-
 clean:
-	rm -f $(OBJ) $(TARGET) $(SFX_BIN) $(SFX_OUT)
+	rm -f $(OBJ) $(TARGET)
+
+run: all
+	./$(TARGET)

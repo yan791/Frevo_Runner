@@ -37,7 +37,7 @@ Recursos carregarRecursos(void) {
     for (int i = 0; i < TIPOS_OBSTACULOS; i++)
         r.obstaculos.sprites[i] = carregarTexturaComChroma(spritesObs[i]);
 
-    r.musica       = LoadMusicStream("assets/audio/frevo_chiptune.wav");
+    r.musica       = LoadMusicStream("assets/audio/frevo_chiptune.mp3");
     r.somMenu      = LoadSound("assets/audio/menu.wav");
     r.somColisao   = LoadSound("assets/audio/collision.wav");
     r.somPontuacao = LoadSound("assets/audio/score.wav");

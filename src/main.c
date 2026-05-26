@@ -21,7 +21,6 @@ int main(void) {
     SetTargetFPS(FPS);
 
     Recursos res = carregarRecursos();
-    PlayMusicStream(res.musica);
     SetMusicVolume(res.musica,       0.45f);
     SetSoundVolume(res.somMenu,      0.35f);
     SetSoundVolume(res.somPulo,      0.40f);
@@ -48,13 +47,36 @@ int main(void) {
         UpdateMusicStream(res.musica);
 
         switch (telaAtual) {
-        case TELA_MENU:
+        case TELA_MENU: {
             if (IsKeyPressed(KEY_DOWN))  { 
                 opcaoMenu = (opcaoMenu + 1) % 4; PlaySound(res.somMenu); 
             }
             if (IsKeyPressed(KEY_UP))    { 
                 opcaoMenu = (opcaoMenu + 3) % 4; PlaySound(res.somMenu); 
             }
+
+            Vector2 mousePos = GetMousePosition();
+            for (int i = 0; i < 4; i++) {
+                Rectangle btnRect = { 330, 245.0f + i * 72, 240, 55 };
+                if (CheckCollisionPointRec(mousePos, btnRect)) {
+                    if (opcaoMenu != i) {
+                        opcaoMenu = i;
+                    }
+                    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                        PlaySound(res.somMenu);
+                        if (i == 0) {
+                            reiniciarJogo(&jogador, &listaObstaculos, &pontuacao, &tempoGeracao,
+                                          &tempoJogo, &deslocamentoFundo, &ultimoMarcoPontuacao, nomeJogador);
+                            pontuacaoSalva = false;
+                            telaAtual = TELA_JOGO;
+                            PlayMusicStream(res.musica);
+                        } else if (i == 1) telaAtual = TELA_RANKING;
+                        else if (i == 2) telaAtual = TELA_CREDITOS;
+                        else rodando = false;
+                    }
+                }
+            }
+
             if (IsKeyPressed(KEY_ENTER)) {
                 PlaySound(res.somMenu);
                 if      (opcaoMenu == 0) {
@@ -62,11 +84,13 @@ int main(void) {
                                   &tempoJogo, &deslocamentoFundo, &ultimoMarcoPontuacao, nomeJogador);
                     pontuacaoSalva = false;
                     telaAtual = TELA_JOGO;
+                    PlayMusicStream(res.musica);
                 }else if (opcaoMenu == 1) telaAtual = TELA_RANKING;
                 else if (opcaoMenu == 2) telaAtual = TELA_CREDITOS;
                 else                     rodando   = false;
             }
             break;
+        }
 
         case TELA_JOGO: {
             bool estavaNoChao = !jogador.pulando;
@@ -99,6 +123,7 @@ int main(void) {
 
             if (verificarColisao(listaObstaculos, jogador)) {
                 PlaySound(res.somColisao);
+                StopMusicStream(res.musica);
                 telaAtual = TELA_GAME_OVER;
             }
             break;
@@ -135,6 +160,7 @@ int main(void) {
                               &tempoJogo, &deslocamentoFundo, &ultimoMarcoPontuacao, nomeJogador);
                 pontuacaoSalva = false;
                 telaAtual = TELA_JOGO;
+                PlayMusicStream(res.musica);
             }
             if (IsKeyPressed(KEY_M)) { telaAtual = TELA_MENU; liberarObstaculos(&listaObstaculos); }
             if (IsKeyPressed(KEY_ESCAPE)) rodando = false;
