@@ -30,8 +30,7 @@ brew install raylib
 ```bash
 git clone https://github.com/yan791/Frevo_Runner.git
 cd Frevo_Runner
-make
-./FrevoRunner
+make run
 ```
 
 O `make` já gera os efeitos sonoros automaticamente antes de compilar o jogo.
